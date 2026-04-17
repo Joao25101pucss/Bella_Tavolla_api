@@ -6,12 +6,33 @@ from datetime import datetime
 router = APIRouter()
 
 pratos = [
-    {"id": 1, "nome": "Margherita", "categoria": "pizza", "preco": 45.0, "preco_promocional": None, "descricao": "Clássica com molho de tomate e mussarela", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
-    {"id": 2, "nome": "Carbonara", "categoria": "massa", "preco": 52.0, "preco_promocional": None, "descricao": "Espaguete com ovo, queijo pecorino e guanciale", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
-    {"id": 3, "nome": "Lasanha Bolonhesa", "categoria": "massa", "preco": 58.0, "preco_promocional": 49.0, "descricao": "Lasanha com ragù de carne e bechamel", "disponivel": False, "criado_em": "2024-01-01T00:00:00"},
-    {"id": 4, "nome": "Tiramisù", "categoria": "sobremesa", "preco": 28.0, "preco_promocional": None, "descricao": "Clássica sobremesa italiana com mascarpone", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
-    {"id": 5, "nome": "Quattro Stagioni", "categoria": "pizza", "preco": 49.0, "preco_promocional": None, "descricao": "Pizza com quatro recheios distintos por fatia", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
-    {"id": 6, "nome": "Panna Cotta", "categoria": "sobremesa", "preco": 24.0, "preco_promocional": None, "descricao": "Creme cozido com calda de frutas vermelhas", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 1, "nome": "Margherita", "categoria": "pizza", "preco": 45.0, "preco_promocional": None, "descricao": "Clássica com molho de tomate, mussarela e manjericão", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 2, "nome": "Carbonara", "categoria": "massa", "preco": 52.0, "preco_promocional": None, "descricao": "Espaguete com ovo, pecorino romano e guanciale", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 3, "nome": "Lasanha Bolonhesa", "categoria": "massa", "preco": 58.0, "preco_promocional": 49.0, "descricao": "Lasanha tradicional com ragù e molho bechamel", "disponivel": False, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 4, "nome": "Tiramisù", "categoria": "sobremesa", "preco": 28.0, "preco_promocional": None, "descricao": "Sobremesa com mascarpone, café e cacau", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 5, "nome": "Quattro Stagioni", "categoria": "pizza", "preco": 49.0, "preco_promocional": None, "descricao": "Pizza com quatro sabores clássicos italianos", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 6, "nome": "Panna Cotta", "categoria": "sobremesa", "preco": 24.0, "preco_promocional": None, "descricao": "Sobremesa italiana com creme e frutas vermelhas", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+
+    {"id": 7, "nome": "Bruschetta Tradicional", "categoria": "entrada", "preco": 28.0, "preco_promocional": None, "descricao": "Pão italiano com tomate, alho, azeite e manjericão", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 8, "nome": "Carpaccio de Carne", "categoria": "entrada", "preco": 42.0, "preco_promocional": None, "descricao": "Finas fatias de carne crua com rúcula e parmesão", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 9, "nome": "Caprese", "categoria": "entrada", "preco": 35.0, "preco_promocional": None, "descricao": "Tomate, mussarela de búfala e manjericão", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+
+    {"id": 10, "nome": "Risoto de Funghi", "categoria": "risoto", "preco": 62.0, "preco_promocional": None, "descricao": "Arroz arbóreo com cogumelos e parmesão", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 11, "nome": "Risoto alla Milanese", "categoria": "risoto", "preco": 68.0, "preco_promocional": None, "descricao": "Risoto com açafrão e manteiga", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 12, "nome": "Gnocchi ao Sugo", "categoria": "massa", "preco": 54.0, "preco_promocional": None, "descricao": "Nhoque de batata com molho de tomate", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 13, "nome": "Fettuccine Alfredo", "categoria": "massa", "preco": 56.0, "preco_promocional": None, "descricao": "Massa com molho cremoso de manteiga e parmesão", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 14, "nome": "Ravioli de Ricota e Espinafre", "categoria": "massa", "preco": 60.0, "preco_promocional": None, "descricao": "Massa recheada com ricota e espinafre ao molho de manteiga", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+
+    {"id": 15, "nome": "Osso Buco", "categoria": "prato_principal", "preco": 85.0, "preco_promocional": None, "descricao": "Vitela cozida lentamente com legumes e vinho", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 16, "nome": "Saltimbocca alla Romana", "categoria": "prato_principal", "preco": 78.0, "preco_promocional": None, "descricao": "Vitela com presunto e sálvia ao vinho branco", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+
+    {"id": 17, "nome": "Lula com Carne de Tubarão do Chef Leo Koide", "categoria": "prato_principal", "preco": 95.0, "preco_promocional": None, "descricao": "Lula recheada com carne de tubarão ao molho mediterrâneo", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    
+    {"id": 18, "nome": "Sopa Alcoólica do Chef Cezar", "categoria": "sopa", "preco": 38.0, "preco_promocional": None, "descricao": "Sopa italiana com vinho branco, ervas e legumes", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+
+    {"id": 19, "nome": "Minestrone", "categoria": "sopa", "preco": 32.0, "preco_promocional": None, "descricao": "Sopa tradicional italiana de legumes e massa", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 20, "nome": "Gelato Artesanal", "categoria": "sobremesa", "preco": 22.0, "preco_promocional": None, "descricao": "Sorvete italiano cremoso em diversos sabores", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 21, "nome": "Cannoli Siciliano", "categoria": "sobremesa", "preco": 26.0, "preco_promocional": None, "descricao": "Massa crocante recheada com ricota doce", "disponivel": True, "criado_em": "2024-01-01T00:00:00"},
 ]
 
 
