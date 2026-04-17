@@ -11,6 +11,17 @@ bebidas = [
     {"id": 3, "nome": "San Pellegrino", "tipo": "agua", "preco": 15.0, "alcoolica": False, "volume_ml": 750, "criado_em": "2024-01-01T00:00:00"},
     {"id": 4, "nome": "Suco de Laranja", "tipo": "suco", "preco": 18.0, "alcoolica": False, "volume_ml": 300, "criado_em": "2024-01-01T00:00:00"},
     {"id": 5, "nome": "Prosecco", "tipo": "vinho", "preco": 95.0, "alcoolica": True, "volume_ml": 750, "criado_em": "2024-01-01T00:00:00"},
+
+    {"id": 6, "nome": "Coca-Cola", "tipo": "refrigerante", "preco": 10.0, "alcoolica": False, "volume_ml": 350, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 7, "nome": "Guaraná Antarctica", "tipo": "refrigerante", "preco": 9.0, "alcoolica": False, "volume_ml": 350, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 8, "nome": "Heineken", "tipo": "cerveja", "preco": 14.0, "alcoolica": True, "volume_ml": 330, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 9, "nome": "Budweiser", "tipo": "cerveja", "preco": 12.0, "alcoolica": True, "volume_ml": 330, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 10, "nome": "Caipirinha", "tipo": "drink", "preco": 25.0, "alcoolica": True, "volume_ml": 250, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 11, "nome": "Mojito", "tipo": "drink", "preco": 28.0, "alcoolica": True, "volume_ml": 300, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 12, "nome": "Suco de Uva", "tipo": "suco", "preco": 16.0, "alcoolica": False, "volume_ml": 300, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 13, "nome": "Red Bull", "tipo": "energetico", "preco": 18.0, "alcoolica": False, "volume_ml": 250, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 14, "nome": "Whisky Johnnie Walker Red Label", "tipo": "destilado", "preco": 150.0, "alcoolica": True, "volume_ml": 750, "criado_em": "2024-01-01T00:00:00"},
+    {"id": 15, "nome": "Gin Tônica", "tipo": "drink", "preco": 30.0, "alcoolica": True, "volume_ml": 300, "criado_em": "2024-01-01T00:00:00"},
 ]
 
 
