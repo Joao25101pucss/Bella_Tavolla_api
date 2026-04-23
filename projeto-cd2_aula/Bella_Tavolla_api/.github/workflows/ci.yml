@@ -1,0 +1,35 @@
+name: CI/CD Bella Tavola - Hugging Face
+
+on:
+  push:
+    branches:
+      - main  # Se a sua branch principal for 'master', mude aqui para 'master'
+
+jobs:
+  deploy-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12' # Mesma versão que você está usando no ambiente
+
+      - name: Instalar dependências do Hugging Face
+        run: |
+          python -m pip install --upgrade pip
+          pip install huggingface_hub
+
+      - name: Upload para o repositório puc-sp-aula
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Faz o login automático usando o token configurado no GitHub Secrets
+          huggingface-cli login --token $HF_TOKEN
+          
+          # Sobe os arquivos para o repositório correto da aula
+          huggingface-cli upload joaogabriel101735/puc-sp-aula model.pkl model.pkl --repo-type model
+          huggingface-cli upload joaogabriel101735/puc-sp-aula README.md README.md --repo-type model
+          huggingface-cli upload joaogabriel101735/puc-sp-aula requirements.txt requirements.txt --repo-type model
