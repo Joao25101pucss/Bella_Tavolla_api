@@ -1,35 +1,82 @@
-name: CI/CD Bella Tavola - Hugging Face
+name: CI/CD Bella Tavola - MLOps Pipeline
 
 on:
   push:
-    branches:
-      - main  # Se a sua branch principal for 'master', mude aqui para 'master'
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy-to-hub:
+  # Job 1: Garantir que o código segue as boas práticas de formatação e limpeza
+  verificar-qualidade:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do repositório
-        uses: actions/checkout@v3
+      - name: Baixar o código
+        uses: actions/checkout@v4
 
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12' # Mesma versão que você está usando no ambiente
+          python-version: '3.12'
 
-      - name: Instalar dependências do Hugging Face
+      - name: Instalar ferramentas de linting
+        run: pip install black autoflake
+
+      - name: Executar verificação de sintaxe
+        run: |
+          autoflake --check --remove-all-unused-imports -r .
+          black --check .
+
+  # Job 2: Executar testes de integração e contrato para evitar quebras silenciosas
+  testar-api:
+    runs-on: ubuntu-latest
+    needs: verificar-qualidade
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar Dependências
         run: |
           python -m pip install --upgrade pip
-          pip install huggingface_hub
+          pip install -r projeto-cd2_aula/Bella_Tavolla_api/requirements.txt
 
-      - name: Upload para o repositório puc-sp-aula
+      - name: Rodar Testes Automatizados (Pytest)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Faz o login automático usando o token configurado no GitHub Secrets
+          # Navega até a pasta onde estão os arquivos de teste
+          cd projeto-cd2_aula/Bella_Tavolla_api
+          pytest -v
+
+  # Job 3: Publicação do modelo validado no Registry do Hugging Face
+  deploy-huggingface:
+    runs-on: ubuntu-latest
+    needs: testar-api # Só publica se os testes passarem
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar Hugging Face Hub
+        run: pip install huggingface_hub
+
+      - name: Upload para o Hub (Model Registry)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Login seguro sem expor credenciais no código
           huggingface-cli login --token $HF_TOKEN
           
-          # Sobe os arquivos para o repositório correto da aula
-          huggingface-cli upload joaogabriel101735/puc-sp-aula model.pkl model.pkl --repo-type model
-          huggingface-cli upload joaogabriel101735/puc-sp-aula README.md README.md --repo-type model
-          huggingface-cli upload joaogabriel101735/puc-sp-aula requirements.txt requirements.txt --repo-type model
+          # Upload dos artefatos validados para o repositório oficial
+          huggingface-cli upload joaogabriel101735/puc-sp-aula projeto-cd2_aula/Bella_Tavolla_api/model.pkl model.pkl --repo-type model
+          huggingface-cli upload joaogabriel101735/puc-sp-aula projeto-cd2_aula/Bella_Tavolla_api/README.md README.md --repo-type model
+          huggingface-cli upload joaogabriel101735/puc-sp-aula projeto-cd2_aula/Bella_Tavolla_api/requirements.txt requirements.txt --repo-type model
