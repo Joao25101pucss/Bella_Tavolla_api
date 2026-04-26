@@ -6,8 +6,8 @@ import os
 router = APIRouter()
 
 # Definição do repositório oficial da aula no Hugging Face
-#REPO_ID = "joaogabriel101735/puc-sp-aula"
-REPO_ID = "joaogabriel101735/errado"
+REPO_ID = "joaogabriel101735/puc-sp-aula"
+#REPO_ID = "joaogabriel101735/errado"
 _model = None
 
 def get_model():
