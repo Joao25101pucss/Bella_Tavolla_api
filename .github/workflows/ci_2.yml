@@ -26,7 +26,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install black autoflake pytest httpx
-          pip install -r requirements.txt
+          pip install -r projeto-cd2_aula/Bella_Tavolla_api/requirements.txt
 
       - name: Diagnóstico do ambiente (Bloco 6.4)
         run: |
