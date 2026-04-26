@@ -1,0 +1,121 @@
+name: CI/CD Bella Tavola - MLOps Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─────────────────────────────────────────────────────
+  # JOB 1: Qualidade (Linting e Smoke Tests)
+  # Roda em todo push e PR para feedback rápido.
+  # ─────────────────────────────────────────────────────
+  qualidade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar Dependências e Ferramentas
+        run: |
+          pip install --upgrade pip
+          pip install black autoflake pytest httpx
+          pip install -r requirements.txt
+
+      - name: Diagnóstico do ambiente (Bloco 6.4)
+        run: |
+          echo "=== Versões ==="
+          python --version
+          echo "=== Estrutura de Pastas ==="
+          ls -R projeto-cd2_aula/Bella_Tavolla_api
+          echo "=== Verificação de Ficheiros Críticos ==="
+          test -f projeto-cd2_aula/Bella_Tavolla_api/main.py && echo "✅ main.py OK"
+          test -f projeto-cd2_aula/Bella_Tavolla_api/model_utils.py && echo "✅ model_utils.py OK"
+
+      - name: Verificar Linting e Sintaxe
+        run: |
+          autoflake --check --remove-all-unused-imports -r .
+          black --check .
+
+      - name: Rodar Testes Smoke (Rápido)
+        run: |
+          cd projeto-cd2_aula/Bella_Tavolla_api
+          pytest -m smoke -v --tb=short
+
+  # ─────────────────────────────────────────────────────
+  # JOB 2: Integração e Entrega (ML e Deploy)
+  # Só roda no merge para main se a qualidade passar.
+  # ─────────────────────────────────────────────────────
+  integracao:
+    runs-on: ubuntu-latest
+    needs: qualidade
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar Dependências
+        run: |
+          pip install --upgrade pip
+          pip install -r projeto-cd2_aula/Bella_Tavolla_api/requirements.txt
+          pip install huggingface_hub
+
+      - name: Cache do modelo Hugging Face (Bloco 5.4)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          # Invalida o cache se o requirements mudar ou se mudarmos a versão manual (v1)
+          key: hf-model-v1-${{ hashFiles('projeto-cd2_aula/Bella_Tavolla_api/requirements.txt') }}
+
+      - name: Diagnóstico com Verificação de Token
+        run: |
+          if [ -n "$HF_TOKEN" ]; then echo "✅ HF_TOKEN configurado"; else echo "❌ Erro: HF_TOKEN ausente"; exit 1; fi
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+
+      - name: Rodar Testes de Integração (ML e Contratos)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          cd projeto-cd2_aula/Bella_Tavolla_api
+          pytest -m integracao -v --tb=short
+
+      - name: Upload para o Hub (Model Registry)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          huggingface-cli login --token $HF_TOKEN
+          # Upload dos artefatos validados
+          huggingface-cli upload joaogabriel101735/puc-sp-aula projeto-cd2_aula/Bella_Tavolla_api/model.pkl model.pkl --repo-type model
+          huggingface-cli upload joaogabriel101735/puc-sp-aula projeto-cd2_aula/Bella_Tavolla_api/README.md README.md --repo-type model
+          huggingface-cli upload joaogabriel101735/puc-sp-aula projeto-cd2_aula/Bella_Tavolla_api/requirements.txt requirements.txt --repo-type model
+
+  # ─────────────────────────────────────────────────────
+  # JOB 3: Relatório Final
+  # Exibe o resumo da operação industrial concluída.
+  # ─────────────────────────────────────────────────────
+  relatorio:
+    runs-on: ubuntu-latest
+    needs: integracao
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Resumo do pipeline
+        run: |
+          echo "================================================="
+          echo "  Pipeline CI/CD Bella Tavola Concluído com Sucesso ✅"
+          echo "================================================="
+          echo "  Branch:  ${{ github.ref_name }}"
+          echo "  Commit:  ${{ github.sha }}"
+          echo "  Status:  ML Validado e Artefatos Enviados"
+          echo "================================================="
