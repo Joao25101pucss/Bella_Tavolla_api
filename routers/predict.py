@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel, Field
 import numpy as np
-import os
 
 router = APIRouter()
 
