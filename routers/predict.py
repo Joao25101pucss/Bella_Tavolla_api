@@ -19,7 +19,7 @@ def get_model():
         # O token é recuperado do ambiente, garantindo segurança
         _model = load_model(REPO_ID)
     return _model
-# O modelo é carregado apenas na primeira chamada, otimizando o desempenho para múltiplas requisições subsequentes.
+
 class PredictInput(BaseModel):
     """
     Schema de entrada com validações rigorosas via Pydantic.
