@@ -20,16 +20,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip' # Estratégia de FinOps: Evita downloads repetidos
 
       - name: Instalar Dependências e Ferramentas
         run: |
           python -m pip install --upgrade pip
-          # Instalando o stack de ML necessário para a coleta de testes
           pip install numpy pandas scikit-learn joblib huggingface_hub
           pip install black autoflake pytest httpx
           pip install -r requirements.txt
 
-      - name: Diagnóstico do ambiente (Bloco 6.4)
+      - name: Diagnóstico do ambiente
         run: |
           echo "=== Estrutura de Pastas ==="
           ls -R
@@ -40,14 +40,12 @@ jobs:
       - name: Verificar Linting e Sintaxe
         run: |
           autoflake --in-place --remove-all-unused-imports -r .
-          # Black em modo informativo (não quebra o pipeline)
           black . || echo "⚠️ Aviso: Ajustes de formatação pendentes..."
 
       - name: Rodar Testes Smoke (Rápido)
         env:
           PYTHONPATH: .
         run: |
-          # Ignora arquivos de teste que dependem do modelo físico para garantir o verde
           pytest -m smoke -v --tb=short --ignore=tests/test_modelo.py
 
   # ─────────────────────────────────────────────────────
@@ -65,6 +63,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip' # Reutiliza os pacotes instalados no job anterior
 
       - name: Instalar Dependências
         run: |
@@ -83,17 +82,13 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           PYTHONPATH: .
         run: |
-          # Executa testes de integração ignorando falhas de coleta de arquivos físicos
-          pytest -m integracao -v --tb=short || echo "⚠️ Alguns testes de integração falharam, mas seguindo para o deploy..."
+          pytest -m integracao -v --tb=short || echo "⚠️ Alguns testes falharam, mas seguindo para o deploy..."
 
       - name: Upload para o Hub (Model Registry)
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Login usando o novo padrão 'hf'
           hf auth login --token $HF_TOKEN
-          
-          # Upload condicional: só tenta subir se o arquivo existir, evitando o erro 'FileNotFound'
           test -f model.pkl && hf upload joaogabriel101735/puc-sp-aula model.pkl model.pkl --repo-type model || echo "⚠️ model.pkl não encontrado"
           test -f README.md && hf upload joaogabriel101735/puc-sp-aula README.md README.md --repo-type model || echo "⚠️ README.md não encontrado"
           test -f requirements.txt && hf upload joaogabriel101735/puc-sp-aula requirements.txt requirements.txt --repo-type model || echo "⚠️ requirements.txt não encontrado"
