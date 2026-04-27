@@ -88,10 +88,10 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          hf auth login --token $HF_TOKEN
-          test -f model.pkl && hf upload joaogabriel101735/puc-sp-aula model.pkl model.pkl --repo-type model || echo "⚠️ model.pkl não encontrado"
-          test -f README.md && hf upload joaogabriel101735/puc-sp-aula README.md README.md --repo-type model || echo "⚠️ README.md não encontrado"
-          test -f requirements.txt && hf upload joaogabriel101735/puc-sp-aula requirements.txt requirements.txt --repo-type model || echo "⚠️ requirements.txt não encontrado"
+          huggingface-cli login --token $HF_TOKEN
+          test -f model.pkl && huggingface-cli upload joaogabriel101735/puc-sp-aula model.pkl model.pkl --repo-type model || echo "⚠️ model.pkl não encontrado"
+          test -f README.md && huggingface-cli upload joaogabriel101735/puc-sp-aula README.md README.md --repo-type model || echo "⚠️ README.md não encontrado"
+          test -f requirements.txt && huggingface-cli upload joaogabriel101735/puc-sp-aula requirements.txt requirements.txt --repo-type model || echo "⚠️ requirements.txt não encontrado"
 
   # ─────────────────────────────────────────────────────
   # JOB 3: Relatório Final
