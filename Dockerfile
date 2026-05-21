@@ -1,20 +1,31 @@
-# Usa a imagem oficial do Python 3.11 (versão slim para ser mais leve, ~130MB)
-FROM python:3.11-slim
+# ─── ESTÁGIO 1: Builder (Onde compilamos as dependências) ───
+FROM python:3.11-slim as builder
+WORKDIR /app
+COPY requirements.txt .
+# Instala as dependências numa pasta local do utilizador para facilitar a cópia
+RUN pip install --user --no-cache-dir -r requirements.txt
 
-# Define o diretório de trabalho dentro do contêiner
+# ─── ESTÁGIO 2: Produção (Imagem final super leve e segura) ───
+FROM python:3.11-slim
 WORKDIR /app
 
-# Copia APENAS o requirements.txt primeiro (Estratégia de Cache do Bloco 9)
-COPY requirements.txt .
+# Criar um utilizador não-root (Exigência do Bloco 12)
+RUN useradd -m -s /bin/bash appuser
 
-# Instala as dependências sem guardar cache inútil na imagem
-RUN pip install --no-cache-dir -r requirements.txt
+# Copiar as bibliotecas instaladas no estágio 1
+COPY --from=builder /root/.local /home/appuser/.local
 
-# Copia o restante do código da aplicação
+# Copiar o código da aplicação
 COPY . .
 
-# Documenta que a API roda na porta 8000
-EXPOSE 8000
+# Dar permissão ao novo utilizador sobre os ficheiros
+RUN chown -R appuser:appuser /app
 
-# Comando para iniciar o servidor (O --host 0.0.0.0 é obrigatório no Docker)
+# Trocar para o utilizador não-root
+USER appuser
+
+# Garantir que o binário do Uvicorn e outras libs estão no PATH
+ENV PATH=/home/appuser/.local/bin:$PATH
+
+EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
