@@ -1,0 +1,26 @@
+# Created by pytest automatically.
+*
+# ─── Segurança (CRÍTICO) ───
+.env
+.env.*
+secrets.json
+
+# ─── Ambientes Virtuais Python ───
+venv/
+env/
+.venv/
+
+# ─── Cache e Arquivos Compilados ───
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ─── Testes (Pytest) ───
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ─── Sistema Operacional (Lixo do Mac/Windows) ───
+.DS_Store
+Thumbs.db
